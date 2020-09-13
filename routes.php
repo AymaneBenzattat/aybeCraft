@@ -1,8 +1,9 @@
 <?php
 
 Route::get("/","HomeController::welcome");
-Route::get("/cat/{id}","Compact::test2");
-Route::get("/setup/{page}","SetupController::setup");
+Route::get("/based","HomeController::based");
+
+Route::error404("HomeController::error404");
 
 
 ?>

@@ -1,0 +1,21 @@
+<?php
+
+require_once("app.php");
+require_once("./Utilities/Console.php");
+
+$console=new Console();
+
+if(file_exists("./Utilities/CLI/".$argv[1])){
+    require_once("./Utilities/CLI/".$argv[1]);
+}elseif (file_exists("./Vendor/CLI".$argv[1])) {
+    require_once("./Vendor/CLI".$argv[1]);
+}else{
+    $console->printLine("Command not found, please type use the ".$console->background("green").$console->foreground("white")."'help'".$console->background().$console->foreground()." command.\n");
+    echo $console->background().$console->foreground();
+}
+
+$arguments=$argv;
+array_shift($arguments);
+array_shift($arguments);
+
+?>

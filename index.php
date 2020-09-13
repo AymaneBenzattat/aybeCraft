@@ -11,15 +11,19 @@ if(DEBUG){
     ini_set('display_startup_errors', 0);
 }
 
-
-foreach (glob("./Controllers/*.php") as $filename)
-{
-    require_once $filename;
-}
 foreach (glob("./Utilities/*.php") as $filename)
 {
     require_once $filename;
 }
+foreach (glob("./Controllers/*.php") as $filename)
+{
+    require_once $filename;
+}
+foreach (glob("./Models/*.php") as $filename)
+{
+    require_once $filename;
+}
+
 require_once("routes.php");
 
 if(SETUP){
@@ -27,12 +31,9 @@ if(SETUP){
     Database::setUsername(DBUSER);
     Database::setPassword(DBPASS);
     Database::setDatabase(DBNAME);
+    Database::setPort(DBPORT);
 }
-
 $GLOBALS["session"]=new Session($_GET["hostname"]);
-// echo "hey"."<br>";
-// echo $session->host."<br>";
-// echo "hey"."<br>";
 
 if (isset($_GET["url"])) {
     // echo $url=$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/".$_GET["url"];

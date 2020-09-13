@@ -1,0 +1,6 @@
+<?php
+
+$url=APPURL;
+shell_exec("open ".$url);
+
+?>

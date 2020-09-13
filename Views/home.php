@@ -7,17 +7,18 @@
     <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css">
 </head>
 <style>
+    @font-face {
+    font-family: 'Protest';
+    src: url(@asset("fonts/protest.ttf"));
+    }
     *{
-        font-family: 'Lato', sans-serif;
+        font-family: 'Protest';
     }
     html, body {
         background-color: #ffffff;
         color: #000000;
         height: 70vh;
         margin: 0;
-    }
-    h1{
-        font-size: 30vh;
     }
     .menu{
         display: flex;
@@ -26,27 +27,23 @@
     }
     .menu > a{
         padding: 0 25px;
+        text-decoration: none;
+        color: #000;
     }
     .setup{
         background-color: #5555ff;
-        color: #ffffff;
+        color: #fff !important;
         line-height: 50px;
         justify-content: center;
     }
 </style>
 <html>
-<h1 align="center">aybe.<span style="font-weight: 200; color: #5555ff">Craft</span></h1>
+<h1 align="center"><img src='@asset("img/aybe.png")' style="height: 70vh"></h1>
 <div class="menu">
-    <?php
-        if (!SETUP) {
-            echo "<a class='setup'>Setup your app</a>";
-        }else {
-            echo "<a class='setup'>Dev tools</a>";
-        }
-    ?>
-    <a>Documentation</a>
-    <a>GitHub</a>
-    <a>Community</a>
+    <a target="_blank" class="setup" href="docs">Documentation</a>
+    <a target="_blank" href="https://github.com/AymaneBenzattat/aybeCraft/">GitHub</a>
+    <a target="_blank" href="https://aybe.com">Company</a>
+    <a href="404">404</a>
 </div>
 @section("database")
 </html>

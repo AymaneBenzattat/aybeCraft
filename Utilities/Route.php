@@ -10,7 +10,6 @@ class Route
 
     private static function urlRE($url)
     {   
-        //echo $url;
         $re = '/{[a-zA-Z0-9_]+\}/';
         preg_match_all($re, $url, $matches, PREG_SET_ORDER, 0);
         $urlre=$url;
@@ -18,10 +17,7 @@ class Route
             $urlre=str_replace($match[0],"[a-zA-Z0-9_]+",$urlre);
             $match[0]=str_replace("{","",$match[0]);
             $match[0]=str_replace("}","",$match[0]);
-            //echo $match[0];
         }
-        //echo "<br>";
-        //echo $urlre;
         $urlre="~^".$urlre."$~";
         return $urlre;
     }
@@ -39,28 +35,19 @@ class Route
             array_push($args,$match[0]);
             //echo $match[0];
         }
-        //echo "<br>";
-        //echo $urlre;
         $urlre="~^".$urlre."$~";
-        //print_r($args);
         return $args;
     }
 
     public static function urlMatch($request,$url){
         $re = self::urlRE($url);
         preg_match_all($re, $request, $matches, PREG_SET_ORDER, 0);
-        //$urlre=$url;
-        //echo "<br>";
-        foreach ($matches as $match) {
-            //echo $match[0];
-        }
         if(count($matches)>0){
             return true;
         }
         else{
             return false;
         }
-        //echo "<br>";
     }
 
     public static function callMethod($args,$method)
@@ -74,12 +61,7 @@ class Route
             return $item->getName();
         }, $params);
 
-        //print_r($paramNames);
-        //print_r($args);
-        //echo "<br>";
-
         foreach ($paramNames as $param) {
-            //echo $param;
             foreach ($args as $key => $value) {
                 if ($key==$param) {
                     $values[$key]=$value;
@@ -97,7 +79,6 @@ class Route
     public static function resolve($request){
         $routes=self::$routes;
         $server=self::server();
-        //echo $server;
         $args=[];
         $error404=true;
         foreach ($routes as $route) {
@@ -105,42 +86,86 @@ class Route
                 if (self::urlMatch($request,$route[1]) || self::urlMatch($request,$route[1]."/")) {
                     $params=self::urlArgs($route[1]);
                     $parts1 = explode("/", $route[1]);
-                    //echo $route[1]."<br>";
-                    //echo $request."<br>";
                     $parts2 = explode("/", $request);
                     $j=0;
                     for ($i=0; $i < count($parts2); $i++) {
-                        //echo $parts2[$i]." == ".$parts1[$i]."<br>";
                         if ($parts2[$i]!=$parts1[$i]) {
-                            //array_push($args,$parts2[$i]);
-                            //echo ">".$i."<";
                             $args[$params[$j]]=$parts2[$i];
                             $j++;
                         }
                     }
                     self::callMethod($args,$route[2]);
-                    //print_r($args);
                     $error404=false;
+                break;
                 }
                 else{
-                    //echo "ff";
                 }
-                //print_r($route);
             }
         }
         if ($error404) {
-            echo "error404";
+            http_response_code(404);
+            self::callMethod([],self::get404()[1]);
+        }
+    }
+
+    public static function get404()
+    {
+        foreach (self::$routes as $route) {
+            if($route[0]=="404"){
+                return $route;
+                break;
+            }
         }
     }
 
     public static function get($url,$function)
     {
-        array_push(self::$routes,["GET",ltrim($url, "/"),$function]);
+        array_push(self::$routes,["GET",ltrim(rtrim($url, "/"),"/"),$function]);
     }
 
     public static function post($url,$function)
     {
-        array_push(self::$routes,["POST",ltrim($url, "/"),$function]);
+        array_push(self::$routes,["POST",ltrim(rtrim($url, "/"),"/"),$function]);
+    }
+
+    public static function head($url,$function)
+    {
+        array_push(self::$routes,["HEAD",ltrim(rtrim($url, "/"),"/"),$function]);
+    }
+
+    public static function put($url,$function)
+    {
+        array_push(self::$routes,["PUT",ltrim(rtrim($url, "/"),"/"),$function]);
+    }
+
+    public static function delete($url,$function)
+    {
+        array_push(self::$routes,["DELETE",ltrim(rtrim($url, "/"),"/"),$function]);
+    }
+
+    public static function connect($url,$function)
+    {
+        array_push(self::$routes,["CONNECT",ltrim(rtrim($url, "/"),"/"),$function]);
+    }
+
+    public static function option($url,$function)
+    {
+        array_push(self::$routes,["OPTION",ltrim(rtrim($url, "/"),"/"),$function]);
+    }
+
+    public static function trace($url,$function)
+    {
+        array_push(self::$routes,["TRACE",ltrim(rtrim($url, "/"),"/"),$function]);
+    }
+
+    public static function patch($url,$function)
+    {
+        array_push(self::$routes,["PATCH",ltrim(rtrim($url, "/"),"/"),$function]);
+    }
+
+    public static function error404($function)
+    {
+        array_push(self::$routes,["404",$function]);
     }
 
 

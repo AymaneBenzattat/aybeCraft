@@ -6,10 +6,11 @@ class Database
     private static $username = "root";
     private static $password = "";
     private static $database = "abcraft";
+    private static $port = 3306;
 
     public static function connect(){
         $link = mysqli_init();
-        $db=mysqli_connect(self::$server,self::$username,self::$password,self::$database);
+        $db=mysqli_connect(self::$server,self::$username,self::$password,self::$database,self::$port);
         return $db;
     }
 
@@ -33,6 +34,11 @@ class Database
         self::$database=$database;
     }
 
+    public static function setPort($port)
+    {
+        self::$port=$port;
+    }
+
     public static function getServer()
     {
         return self::$server;
@@ -51,6 +57,11 @@ class Database
     public static function getDatabase()
     {
         return self::$database;
+    }
+
+    public static function getPort()
+    {
+        return self::$port;
     }
 
     public static function update() {

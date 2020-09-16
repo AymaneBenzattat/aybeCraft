@@ -1,23 +1,29 @@
 <?php
 /**
- * @table Users
  * @index id_user
+ * @table Users
  */
 class User extends BasedObject
 {
     /**
-     * @column nom
+     * @column user_id
+     */
+    public $id;
+    /**
+     * @column username
      */
     public $name;
     /**
      * @salted
+     * @column password
      */
     public $pass;
     /**
-     * @type integer
+     * @var number
      * @column mon_age
+     * @not null
      */
-    public $age;
+    public $age=13;
 }
 
 

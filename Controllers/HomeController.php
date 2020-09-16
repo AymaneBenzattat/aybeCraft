@@ -14,8 +14,12 @@ class HomeController
 
     public static function based(){
         $test=new User();
-        $test->name="Aymane";
+        $test->name="Admin";
         $test->id=3;
+        $test->pass="azerty";
+        $test->save();
+        $result=User::get(1);
+        echo json_encode($result);
     }
 
 }

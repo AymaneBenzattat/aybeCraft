@@ -33,7 +33,7 @@ if(SETUP){
     Database::setDatabase(DBNAME);
     Database::setPort(DBPORT);
 }
-$GLOBALS["session"]=new Session($_GET["hostname"]);
+// $GLOBALS["session"]=new Session($_GET["hostname"]);
 
 if (isset($_GET["url"])) {
     // echo $url=$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/".$_GET["url"];

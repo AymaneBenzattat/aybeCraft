@@ -7,7 +7,7 @@ const SETUP=true;
 const DEBUG=true;
 
 const DBHOST="127.0.0.1";
-const DBNAME="jawhara";
+const DBNAME="craft";
 const DBUSER="user";
 const DBPASS="";
 const DBPORT=8889;

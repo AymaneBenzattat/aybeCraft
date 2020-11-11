@@ -1,5 +1,7 @@
 <?php
 
+namespace Utilities;
+
 class Console{
     private $bg_colors=array(
         "default" => 49,

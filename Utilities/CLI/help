@@ -1,5 +1,5 @@
 <?php
 
-echo "try these commands:";
+$console->printLine("Try these commands\n");
 
 ?>

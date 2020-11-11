@@ -1,17 +1,30 @@
 <?php
 
+namespace Utilities;
+
+use Utilities\Database;
+
 abstract class BasedObject
 {
     /**
-    *@type int
+    *@var int
     */
     public $id;
     private $db_table;
     private $db_fields;
     private $id_column="id";
+    private static $classname=__CLASS__;
+
+    public function getId_column(){
+        return $this->id_column;
+    }
+
+    public function getDb_table(){
+        return $this->db_table;
+    }
 
     public final function __construct(){
-        $classname=$this->getClass();
+        self::$classname=$this->getClass();
         $this->db_table=$this->getTable();   
         $this->getFields();
     }
@@ -20,39 +33,131 @@ abstract class BasedObject
         return get_class($this);
     }
 
-    public static final function get($id){
-        $dbname=DBNAME;
-        $classname=static::class;
-        $reflection  = new ReflectionClass($classname);
+    public function query(){
+        $query=new SelectQuery("Users");
+        $query->where("username","=","bruh");
+        $query->where("password","=","idk");
+        echo $query->get();
+    }
+
+    public static function where($field,$operator,$value){
+        $classname=self::$classname;
+        $reflection  = new \ReflectionClass($classname);
         $object = $reflection->newInstance();
         $object->db_table=$object->getTable();
         $object->db_fields=$object->getFields();
         $id_column=$object->id_column;
-        $sql="SELECT * FROM `".$dbname."`.`".$object->db_table."` WHERE ".$id_column."=?";
-        $result=Database::selectOne($sql,$id);
-        foreach ($result as $property => $value) {
-            foreach ($object->db_fields as $field) {
-                if($property==$field->name && !$field->is_salted && !$field->is_object){
-                    $propertyName=$field->property;
-                    $object->$propertyName=$value;
-                }
+
+        $query=new SelectQuery($object->getTable());
+        $query->where($field,$operator,$value);
+        return $query;
+    }
+
+    public final function getField($fieldname){
+        $result=false;
+        foreach ($this->db_fields as $field) {
+            if (condition) {
+                $field->name=$fieldname;
+                return $field->property;
+            break;
             }
         }
-        return $object;
+    }
+
+    public final function getColumn($fieldname){
+        $result=false;
+        foreach ($this->db_fields as $field) {
+            if (condition) {
+                $field->property=$fieldname;
+                return $field->name;
+            break;
+            }
+        }
+    }
+
+    public final function columnExists($column){
+        $result=Database::selectOne("SHOW COLUMNS FROM `".$this->db_table."` LIKE '".$column."';");
+        if(count($result)>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public static function get($id){
+        $dbname=DBNAME;
+        $classname=self::$classname;
+        $reflection  = new \ReflectionClass($classname);
+        $object = $reflection->newInstance();
+        $object->db_table=$object->getTable();
+        $object->db_fields=$object->getFields();
+        $id_column=$object->id_column;
+        $count=Database::selectOne("SELECT COUNT(".$id_column.") as mycount FROM `".$dbname."`.`".$object->db_table."` WHERE ".$id_column."=?",$id);
+        if($count["mycount"]<1){
+            return false;
+        }else{
+            $sql="SELECT * FROM `".$dbname."`.`".$object->db_table."` WHERE ".$id_column."=?";
+            $result=Database::selectOne($sql,$id);
+            foreach ($result as $property => $value) {
+                foreach ($object->db_fields as $field) {
+                    if($property==$field->name && !$field->is_object){
+                        $propertyName=$field->property;
+                        $object->$propertyName=$value;
+                    }
+                }
+            }
+            return $object;
+        }
+        
+    }
+
+    public static function list(){
+        $dbname=DBNAME;
+        $classname=self::$classname;
+        $reflection  = new \ReflectionClass($classname);
+        $object = $reflection->newInstance();
+        $object->db_table=$object->getTable();
+        $object->db_fields=$object->getFields();
+        $id_column=$object->id_column;
+        $sql="SELECT * FROM `".$dbname."`.`".$object->db_table."`";
+        // echo $sql;
+        $result=Database::selectMany($sql);
+        $return=[];
+        foreach ($result as $row) {
+            $object=$object->get($row[$id_column]);
+            array_push($return,$object);
+        }
+        return $return;
+    }
+
+    public static function delete($id){
+        $dbname=DBNAME;
+        $classname=self::$classname;
+        $reflection  = new \ReflectionClass($classname);
+        $object = $reflection->newInstance();
+        $object->db_table=$object->getTable();
+        $object->db_fields=$object->getFields();
+        $id_column=$object->id_column;
+        $sql="DELETE FROM `".$dbname."`.`".$object->db_table."` WHERE ".$id_column."=?";
+        $result=Database::update($sql,$id);
     }
 
     public final function save(){
         $dbname=DBNAME;        
         $this->db_table=$this->getTable();
         $this->db_fields=$this->getFields();
-        $sql="SELECT COUNT(".$this->id_column.") AS result FROM `".$dbname."`.`".$this->getTable()."` WHERE ".$this->id_column."=?";
-        // echo $sql;
-        $count=DataBase::selectOne($sql,$this->id);
-        if($count["result"]>0){
-            $this->update();
-        }else{
-            $this->insert();
-        }
+        $id_column=$this->id_column;
+        if (isset($this->$id_column)) {
+            $sql="SELECT COUNT(".$this->$id_column.") AS result FROM `".$dbname."`.`".$this->getTable()."` WHERE ".$this->id_column."=?";
+            $count=DataBase::selectOne($sql,$this->id);
+            if($count["result"]>0){
+                $this->update();
+            }else{
+                $this->insert();
+            }
+            }else{
+                $this->insert();
+            }
     }
 
     public final function update(){
@@ -66,7 +171,6 @@ abstract class BasedObject
         // print_r($this->db_fields);
         foreach ($this->db_fields as $field) {
             if(!$this->checkType($field)){
-                echo "<br>error</br>";
                 return false;
             }
             if($field->is_salted){
@@ -83,7 +187,7 @@ abstract class BasedObject
             }
         }
         array_unshift($values,$query);
-        forward_static_call_array("Database::update",$values);
+        forward_static_call_array("Utilities\Database::update",$values);
     }
 
     public final function insert(){
@@ -97,7 +201,6 @@ abstract class BasedObject
         // print_r($this->db_fields);
         foreach ($this->db_fields as $field) {
             if(!$this->checkType($field)){
-                echo "<br>error</br>";
                 return false;
             }
             if($field->is_salted){
@@ -127,14 +230,15 @@ abstract class BasedObject
         }
         // echo $query;
         // print_r($values);
+        // echo $query;
         array_unshift($values,$query);
-        forward_static_call_array("Database::update",$values);
+        forward_static_call_array("Utilities\Database::update",$values);
     }
 
     public final function getTable(){
-        $classname=$this->getClass();
+        $classname=self::$classname;
         $result=$classname;
-        $meta = new ReflectionClass($classname);
+        $meta = new \ReflectionClass($classname);
         $comment=$meta->getDocComment();
         preg_match_all('#@(.*?)\n#s', $comment, $annotations);
         foreach ($annotations[1] as $annotation) {
@@ -221,7 +325,7 @@ abstract class BasedObject
         foreach ($public as $field => $value) {        
             $dataField = new DataField($field,$field);
             $dataField->value=$value;
-            $comment = new ReflectionProperty($classname, $field);
+            $comment = new \ReflectionProperty($classname, $field);
             $comment=$comment->getDocComment();
             preg_match_all('#@(.*?)\n#s', $comment, $annotations);
             //parse annotations
@@ -290,6 +394,40 @@ class DataField{
         return get_object_vars($object);
     }
     
+}
+
+class SelectQuery{
+    public $sql;
+    public $wheres=[];
+
+    public function __construct($table){
+        $this->sql="SELECT * FROM ".$table;
+    }
+
+    public function where($field,$operator,$value){
+        array_push($this->wheres,$field.$operator."'".$value."'");
+    }
+
+    private function build(){
+        $result=$this->sql;
+        if(count($this->wheres)>0){
+            for ($i=0; $i < count($this->wheres); $i++) { 
+                if ($i==0) {
+                    $result=$result." WHERE ".$this->wheres[$i];
+                }else{
+                    $result=$result." AND ".$this->wheres[$i];
+                }
+            }
+        }
+        $this->sql=$result;
+    }
+
+    public function get(){
+        $this->build();
+        return $this->sql;
+    }
+    
+
 }
 
 

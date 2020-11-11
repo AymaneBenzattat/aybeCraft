@@ -1,5 +1,7 @@
 <?php
 
+namespace Utilities;
+
 class Database
 {
     private static $server = "localhost";
@@ -66,70 +68,77 @@ class Database
 
     public static function update() {
         $sql=func_get_arg(0);
+
+        $args=[];
+        for ($i=1; $i < count(func_get_args()); $i++) { 
+            array_push($args,func_get_arg($i));
+        }
+
         $conn=self::connect();
         $stmt = $conn->prepare($sql);
         $type="";
-        foreach (func_get_args() as $p) {
-            if($p!=func_get_arg(0)){
-                if(gettype($p)=="integer"){
-                    $type=$type."i";
-                }
-                if(gettype($p)=="string"){
-                    $type=$type."s";
-                }
-                if(gettype($p)=="double"||gettype($p)=="float"){
-                    $type=$type."d";
-                }
-                
+        foreach ($args as $p) {
+            if(gettype($p)=="integer" || empty($p)){
+                $type=$type."i";
+            }elseif(gettype($p)=="string" || is_null($p)){
+                $type=$type."s";
+            }elseif(gettype($p)=="double"||gettype($p)=="float"){
+                $type=$type."d";
             }
-            
         }
         $params=[];
 
-        foreach (func_get_args() as $p) {
-            if($p!=func_get_arg(0)){
-                array_push($params, $p);
-                
+        foreach ($args as $p) {
+            if(is_null($p) || empty($p)){
+                $p="";
             }
-            
+            array_push($params, $p);
         }
+
+        // print_r($args);
+        // print($sql);
+        // echo $type;
+
         if(count($params)>0){
             $stmt->bind_param($type, ...$params);
         }
-        //print_r($params);
         //$stmt->bind_param($type, ...$params);
         return $stmt->execute() or die($conn->error);
     }
 
     public static function selectOne() {
         $sql=func_get_arg(0);
+
+        // print_r(func_get_args());
+
+        $args=[];
+        for ($i=1; $i < count(func_get_args()); $i++) { 
+            array_push($args,func_get_arg($i));
+        }
+
         $conn=self::connect();
         $stmt = $conn->prepare($sql);
         $type="";
-        foreach (func_get_args() as $p) {
-            if($p!=func_get_arg(0)){
-                if(gettype($p)=="integer"){
-                    $type=$type."i";
-                }
-                if(gettype($p)=="string"){
-                    $type=$type."s";
-                }
-                if(gettype($p)=="double"||gettype($p)=="float"){
-                    $type=$type."d";
-                }
-                
+        foreach ($args as $p) {
+            if(gettype($p)=="integer" || empty($p)){
+                $type=$type."i";
+            }elseif(gettype($p)=="string" || is_null($p)){
+                $type=$type."s";
+            }elseif(gettype($p)=="double"||gettype($p)=="float"){
+                $type=$type."d";
             }
             
         }
         $params=[];
 
-        foreach (func_get_args() as $p) {
-            if($p!=func_get_arg(0)){
+        foreach ($args as $p) {
                 array_push($params, $p);
-            }
             
         }
-        //print_r($params);
+        // print_r($params);
+
+        // echo $sql;
+
         if(count($params)>0){
             $stmt->bind_param($type, ...$params);
         }
@@ -143,18 +152,22 @@ class Database
 
     public static function selectMany() {
         $sql=func_get_arg(0);
+
+        $args=[];
+        for ($i=1; $i < count(func_get_args()); $i++) { 
+            array_push($args,func_get_arg($i));
+        }
+
         $conn=self::connect();
         $stmt = $conn->prepare($sql);
         $type="";
-        foreach (func_get_args() as $p) {
-            if($p!=func_get_arg(0)){
-                if(gettype($p)=="integer"){
-                    $type=$type."i";
-                }
-                if(gettype($p)=="string"){
+        foreach ($args as $p) {
+            if(true){
+                if(gettype($p)=="integer" || empty($p)){
+                $type=$type."i";
+                }elseif(gettype($p)=="string" || is_null($p)){
                     $type=$type."s";
-                }
-                if(gettype($p)=="double"||gettype($p)=="float"){
+                }elseif(gettype($p)=="double"||gettype($p)=="float"){
                     $type=$type."d";
                 }
                 
@@ -163,8 +176,8 @@ class Database
         }
         $params=[];
 
-        foreach (func_get_args() as $p) {
-            if($p!=func_get_arg(0)){
+        foreach ($args as $p) {
+            if(true){
                 array_push($params, $p);
             }
             

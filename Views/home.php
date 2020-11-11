@@ -4,12 +4,11 @@
     <meta charset="utf-8">
     <title><?= APPNAME ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css">
 </head>
 <style>
     @font-face {
     font-family: 'Protest';
-    src: url(@asset("fonts/protest.ttf"));
+    src: url(@asset(fonts/protest.ttf));
     }
     *{
         font-family: 'Protest';
@@ -30,20 +29,30 @@
         text-decoration: none;
         color: #000;
     }
-    .setup{
+    .docs{
         background-color: #5555ff;
         color: #fff !important;
         line-height: 50px;
         justify-content: center;
     }
+    .icon{
+        width: 16pt;
+        height: 20pt;
+    }
+    .icon-red{
+        filter: invert(22%) sepia(65%) saturate(6888%) hue-rotate(354deg) brightness(92%) contrast(121%);
+    }
+    .icon-green{
+        filter: invert(19%) sepia(97%) saturate(3496%) hue-rotate(98deg) brightness(93%) contrast(105%);
+    }
 </style>
 <html>
-<h1 align="center"><img src='@asset("img/aybe.png")' style="height: 70vh"></h1>
+<h1 align="center"><img src='@asset(img/aybe.png)' style="height: 70vh"></h1>
 <div class="menu">
-    <a target="_blank" class="setup" href="docs">Documentation</a>
+    <a target="_blank" class="docs" href="docs">Documentation</a>
     <a target="_blank" href="https://github.com/AymaneBenzattat/aybeCraft/">GitHub</a>
     <a target="_blank" href="https://aybe.com">Company</a>
     <a href="404">404</a>
 </div>
-@section("database")
+@section(database)
 </html>

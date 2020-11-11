@@ -1,6 +1,6 @@
 <?php
 
-require_once("app.php");
+require_once("./Config/app.php");
 
 if(DEBUG){
     ini_set('display_errors', 1);
@@ -11,20 +11,20 @@ if(DEBUG){
     ini_set('display_startup_errors', 0);
 }
 
-foreach (glob("./Utilities/*.php") as $filename)
-{
-    require_once $filename;
-}
-foreach (glob("./Controllers/*.php") as $filename)
-{
-    require_once $filename;
-}
-foreach (glob("./Models/*.php") as $filename)
-{
-    require_once $filename;
-}
+spl_autoload_register(function ($class_name) {
+    $class_name=str_replace('\\', '/', $class_name);
+    $class_name=$class_name.".php";
+    if(file_exists($class_name)){
+        require_once($class_name);
+    }else{
+        echo $class_name." not found";
+    }
+});
 
-require_once("routes.php");
+use Utilities\Database;
+use Utilities\Route;
+
+include("./Config/routes.php");
 
 if(SETUP){
     Database::setServer(DBHOST);
@@ -33,11 +33,23 @@ if(SETUP){
     Database::setDatabase(DBNAME);
     Database::setPort(DBPORT);
 }
-// $GLOBALS["session"]=new Session($_GET["hostname"]);
 
-if (isset($_GET["url"])) {
-    // echo $url=$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF'])."/".$_GET["url"];
-    Route::resolve($_GET["url"]);
+
+$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
+$url=ltrim($_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"],APPURL);
+$url=ltrim($url,$_SERVER["HTTP_HOST"]);
+if(HTTPS){
+    $http="https://";
+}else{
+    $http="http://";
+}
+$full_url=$http.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
+define('NEWAPPURL',"$full_url");
+
+
+
+if (isset($url)) {
+    Route::resolve($url);
 }
 else {
     Route::resolve("/");

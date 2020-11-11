@@ -1,16 +1,21 @@
 <?php
 
-require_once("app.php");
+require_once("./Config/app.php");
 require_once("./Utilities/Console.php");
-
+use Utilities\Console;
 $console=new Console();
 
-if(file_exists("./Utilities/CLI/".$argv[1])){
-    require_once("./Utilities/CLI/".$argv[1]);
-}elseif (file_exists("./Vendor/CLI".$argv[1])) {
-    require_once("./Vendor/CLI".$argv[1]);
+if(isset($argv[1])){
+    if(file_exists("./Utilities/CLI/".$argv[1])){
+        require_once("./Utilities/CLI/".$argv[1]);
+    }elseif (file_exists("./Vendor/CLI".$argv[1])) {
+        require_once("./Vendor/CLI".$argv[1]);
+    }else{
+        $console->printLine("Command not found, please type use the ".$console->background("green").$console->foreground("white")."'help'".$console->background().$console->foreground()." command.\n");
+        echo $console->background().$console->foreground();
+    }
 }else{
-    $console->printLine("Command not found, please type use the ".$console->background("green").$console->foreground("white")."'help'".$console->background().$console->foreground()." command.\n");
+    $console->printLine("Welcome to Craft.\n");
     echo $console->background().$console->foreground();
 }
 

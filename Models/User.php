@@ -1,29 +1,31 @@
 <?php
+
+namespace Models;
+
+use Utilities\BasedObject;
+use Utilities\SoftDelete;
+
 /**
- * @index id_user
- * @table Users
+ * @table User
  */
 class User extends BasedObject
 {
-    /**
-     * @column user_id
-     */
+    use SoftDelete;
+
     public $id;
     /**
-     * @column username
-     */
-    public $name;
-    /**
      * @salted
-     * @column password
      */
-    public $pass;
+    public $password;
     /**
-     * @var number
-     * @column mon_age
-     * @not null
+     * @var email
      */
-    public $age=13;
+    public $email;
+    public $photo="default.jpg";
+    public $name="Utilisateur";
+    public $used_storage=0;
+    public $total_storage=0;
+    public $user_type="user";
 }
 
 

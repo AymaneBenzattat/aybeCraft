@@ -1,0 +1,8 @@
+<?php
+
+$console->printLine($console->foreground("white").$console->background("blue")."Craft development server");
+$console->printLine($console->foreground("white").$console->background("green")."Listening to 127.0.0.1 on port 8080");
+echo $console->background().$console->foreground();
+$output = shell_exec("php -S 127.0.0.1:8080");
+
+?>

@@ -1,5 +1,8 @@
 <?php
 
+namespace Utilities;
+use Controllers;
+
 class Route
 {
     public static $routes=[];
@@ -52,6 +55,7 @@ class Route
 
     public static function callMethod($args,$method)
     {
+        $method="Controllers\\".$method;
         $methodParts=explode("::",$method);
         $ReflectionMethod =  new \ReflectionMethod($methodParts[0], $methodParts[1]);
 
@@ -73,10 +77,12 @@ class Route
             $values=[];
         }
 
-        forward_static_call_array($method,$values);
+        $result = forward_static_call_array($method,$values);
     }
 
     public static function resolve($request){
+        $request=rtrim($request,"/");
+        $request=ltrim($request,"/");
         $routes=self::$routes;
         $server=self::server();
         $args=[];

@@ -9,7 +9,7 @@
 <style>
     @font-face {
     font-family: 'Protest';
-    src: url(@asset(fonts/protest.ttf));
+    src: url('@asset(fonts/protest.ttf)');
     }
     *{
         font-family: 'Protest';

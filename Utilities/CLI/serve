@@ -1,8 +1,23 @@
 <?php
 
-$console->printLine($console->foreground("white").$console->background("blue")."Craft development server");
-$console->printLine($console->foreground("white").$console->background("green")."Listening to 127.0.0.1 on port 8080");
-echo $console->background().$console->foreground();
-$output = shell_exec("php -S 127.0.0.1:8080");
+function checkport($ip, $portt) {
+    $fp = @fsockopen($ip, $portt, $errno, $errstr, 0.1);
+    if (!$fp) {
+        return false;
+    } else {
+        fclose($fp);
+        return true;
+    }
+}
+
+for ($i=8080; $i < 65535; $i++) { 
+    if(!checkport("127.0.0.1",$i)){
+        $console->printLine($console->foreground("white").$console->background("blue")."Craft development server");
+        $console->printLine($console->foreground("white").$console->background("green")."Listening to 127.0.0.1 on port ".$i);
+        echo $console->background().$console->foreground();
+        shell_exec("open http://127.0.0.1:".$i);
+        $output = shell_exec("php -S 127.0.0.1:".$i);
+    }
+}
 
 ?>

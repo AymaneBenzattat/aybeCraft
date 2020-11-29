@@ -1,0 +1,16 @@
+<?php
+$protected=["Config","Controllers","Models","Storage","Utilities","Vendor","Views"];
+$content="RewriteEngine on\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteRule ^(.*)$ ./index.php [QSA,L]";
+$file = fopen("./.htaccess", "w");
+fwrite($file, $content);
+fclose($file);
+$console->printLine("Written root .htaccess");
+$content="Deny from all";
+foreach ($protected as $folder) {
+    $file = fopen("./".$folder."/.htaccess", "w");
+    fwrite($file, $content);
+    fclose($file);
+    $console->printLine("Written ./".$folder."/.htaccess");
+}
+$console->printLine("Apache files created successfully","white","green");
+?>

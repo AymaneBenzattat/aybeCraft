@@ -54,5 +54,5 @@
     <a target="_blank" href="https://aybe.com">Company</a>
     <a href="404">404</a>
 </div>
-@section(database)
+
 </html>

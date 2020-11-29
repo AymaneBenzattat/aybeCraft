@@ -15,12 +15,17 @@ class User extends BasedObject
     public $id;
     /**
      * @salted
+     * @hidden
+     * @column password
      */
-    public $password;
+    public $passsword;
     /**
      * @var email
      */
-    public $email;
+    /**
+     * @column email
+     */
+    public $username;
     public $photo="default.jpg";
     public $name="Utilisateur";
     public $used_storage=0;

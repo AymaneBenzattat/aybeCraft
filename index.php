@@ -33,17 +33,29 @@ if(SETUP){
     Database::setDatabase(DBNAME);
     Database::setPort(DBPORT);
 }
-
-
-$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
-$url=ltrim($_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"],APPURL);
-$url=ltrim($url,$_SERVER["HTTP_HOST"]);
+$oldurl=$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
+$url="/";
+$result=explode(APPURL,$oldurl);
+if(count($result)>1) {
+    $url=$result[1];
+}else{
+    $url=$result[0];
+}
+$result=explode($_SERVER["HTTP_HOST"],$url);
+if(count($result)>1) {
+    $url=$result[1];
+}
+if (!empty($url)) {
+    $appurl=explode($url,$oldurl)[0];
+}else{
+    $appurl=$oldurl;
+}
 if(HTTPS){
     $http="https://";
 }else{
     $http="http://";
 }
-$full_url=$http.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
+$full_url=$http.$appurl;
 define('NEWAPPURL',"$full_url");
 
 

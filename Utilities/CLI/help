@@ -1,5 +1,15 @@
 <?php
 
-$console->printLine("Try these commands\n");
+$console->printLine("Available commands:");
+$files = glob("./Utilities/CLI/*", GLOB_BRACE);
+foreach($files as $file) {
+    $command=explode("/",$file);
+    $console->printLine("\t> ".$command[count($command)-1],"white","green");
+}
+$files = glob("./Vendor/CLI/*", GLOB_BRACE);
+foreach($files as $file) {
+    $command=explode("/",$file);
+    $console->printLine("\t> ".$command[count($command)-1],"white","blue");
+}
 
 ?>

@@ -5,18 +5,18 @@
     trait SoftDelete{
         public static function delete($id){
             $dbname=DBNAME;
-            $classname=self::$classname;
+            $classname=get_called_class();
             $reflection  = new \ReflectionClass($classname);
             $object = $reflection->newInstance();
-            $object->db_table=$object->getTable();
-            $object->db_fields=$object->getFields();
-            $id_column=$object->id_column;
-            if ($this->columnExists()) {
-                # code...
+            $object->getTable();
+            $object->getFields();
+            $id_column=$object->getId_column();
+            if ($object->columnExists("deleted_at")) {
+                Database::update("UPDATE `".$dbname."`.`".$object->getTable()."` SET deleted_at=CURRENT_TIMESTAMP WHERE ".$id_column."=? ",$id);
+            }else{
+                Database::update("ALTER TABLE ".$object->getTable()." ADD COLUMN deleted_at TIMESTAMP NULL DEFAULT NULL");
+                Database::update("UPDATE `".$dbname."`.`".$object->getTable()."` SET deleted_at=CURRENT_TIMESTAMP WHERE ".$id_column."=? ",$id);
             }
-
-            // $sql="DELETE FROM `".$dbname."`.`".$object->db_table."` WHERE ".$id_column."=?";
-            $result=Database::update($sql,$id);
         }
     }
 

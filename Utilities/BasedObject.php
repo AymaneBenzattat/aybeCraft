@@ -3,6 +3,7 @@
 namespace Utilities;
 
 use Utilities\Database;
+use Utilities\Query;
 
 abstract class BasedObject
 {
@@ -29,48 +30,69 @@ abstract class BasedObject
         $this->getFields();
     }
 
+    public static function __constructStatic()
+    {
+        
+    }
+
     public final function getClass(){
         return get_class($this);
     }
 
+    public static final function getClassStatic(){
+        return get_called_class();
+    }
+
     public function query(){
-        $query=new SelectQuery("Users");
+        $query=new Query("Users");
         $query->where("username","=","bruh");
         $query->where("password","=","idk");
-        echo $query->get();
+        echo $query->getSql();
+    }
+
+    public function toJson(){
+        $result=[];
+        foreach ($this->getFields() as $field) {
+            if(!$field->is_hidden){
+                $result[$field->property]=$field->value;
+            }
+        }
+        return \json_encode($result);
+    }
+
+    public function toJsonHidden(){
+        $result=[];
+        foreach ($this->getFields() as $field) {
+            $result[$field->property]=$field->value;
+        }
+        return \json_encode($result);
     }
 
     public static function where($field,$operator,$value){
-        $classname=self::$classname;
+        $classname=self::getClassStatic();
         $reflection  = new \ReflectionClass($classname);
+        $classname = $reflection->getShortName();
         $object = $reflection->newInstance();
-        $object->db_table=$object->getTable();
-        $object->db_fields=$object->getFields();
         $id_column=$object->id_column;
-
-        $query=new SelectQuery($object->getTable());
+        $query=new BasedQuery($object->getTable(),$classname);
         $query->where($field,$operator,$value);
         return $query;
     }
 
     public final function getField($fieldname){
         $result=false;
-        foreach ($this->db_fields as $field) {
-            if (condition) {
-                $field->name=$fieldname;
+        foreach ($this->getFields() as $field) {
+            if ($field->name=$fieldname){
                 return $field->property;
-            break;
             }
         }
     }
 
     public final function getColumn($fieldname){
         $result=false;
-        foreach ($this->db_fields as $field) {
-            if (condition) {
-                $field->property=$fieldname;
+        foreach ($this->getFields() as $field) {
+            if ($field->property=$fieldname){
                 return $field->name;
-            break;
             }
         }
     }
@@ -86,7 +108,7 @@ abstract class BasedObject
 
     public static function get($id){
         $dbname=DBNAME;
-        $classname=self::$classname;
+        $classname=self::getClassStatic();
         $reflection  = new \ReflectionClass($classname);
         $object = $reflection->newInstance();
         $object->db_table=$object->getTable();
@@ -113,7 +135,7 @@ abstract class BasedObject
 
     public static function list(){
         $dbname=DBNAME;
-        $classname=self::$classname;
+        $classname=\get_called_class();
         $reflection  = new \ReflectionClass($classname);
         $object = $reflection->newInstance();
         $object->db_table=$object->getTable();
@@ -132,7 +154,7 @@ abstract class BasedObject
 
     public static function delete($id){
         $dbname=DBNAME;
-        $classname=self::$classname;
+        $classname=\get_called_class();
         $reflection  = new \ReflectionClass($classname);
         $object = $reflection->newInstance();
         $object->db_table=$object->getTable();
@@ -236,7 +258,7 @@ abstract class BasedObject
     }
 
     public final function getTable(){
-        $classname=self::$classname;
+        $classname=\get_called_class();
         $result=$classname;
         $meta = new \ReflectionClass($classname);
         $comment=$meta->getDocComment();
@@ -351,6 +373,11 @@ abstract class BasedObject
                             preg_match_all('/not null/s', $annotation, $res);
                             if(count($res[0])>0){
                                 $dataField->is_null=false;
+                            }else{
+                                preg_match_all('/hidden/s', $annotation, $res);
+                                if(count($res[0])>0){
+                                    $dataField->is_hidden=true;
+                                }
                             }
                         }
                     }
@@ -375,6 +402,7 @@ class DataField{
     public $property;
     public $type;
     public $value;
+    public $is_hidden = false;
     public $is_salted = false;
     public $is_null = true;
     public $is_object = false;
@@ -395,40 +423,5 @@ class DataField{
     }
     
 }
-
-class SelectQuery{
-    public $sql;
-    public $wheres=[];
-
-    public function __construct($table){
-        $this->sql="SELECT * FROM ".$table;
-    }
-
-    public function where($field,$operator,$value){
-        array_push($this->wheres,$field.$operator."'".$value."'");
-    }
-
-    private function build(){
-        $result=$this->sql;
-        if(count($this->wheres)>0){
-            for ($i=0; $i < count($this->wheres); $i++) { 
-                if ($i==0) {
-                    $result=$result." WHERE ".$this->wheres[$i];
-                }else{
-                    $result=$result." AND ".$this->wheres[$i];
-                }
-            }
-        }
-        $this->sql=$result;
-    }
-
-    public function get(){
-        $this->build();
-        return $this->sql;
-    }
-    
-
-}
-
 
 ?>

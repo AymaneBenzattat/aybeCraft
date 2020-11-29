@@ -1,0 +1,30 @@
+<?php
+
+function create($name){
+    global $console;
+    $name=trim($name);
+    if(!file_exists("./Controllers/API/".$name.".php")){
+        $content="<?php\n\nnamespace Controllers\\API;\n\nuse Utilities\Controller;\n\nclass ".$name." extends Controller\n{\n\n\t//Controller methods here\n\n}\n\n?>";
+        $file = fopen("./Controllers/API/".$name.".php", "w");
+        fwrite($file, $content);
+        fclose($file);
+        $console->print("Controller ");
+        $console->print("'".$name."'","white","blue");
+        $console->printLine(" created successfully!");
+    }else{
+        $console->printLine("Controller '".$name."' already exists, please delete it first.","white","red");
+    }
+}
+
+if (isset($arguments[0])) {
+    $name=$arguments[0];
+    create($name);
+}else{
+    $console->print("Enter controller name: ");
+    $name=$console->read();
+    $console->foreground("default");
+    $console->background("default");
+    create($name);
+}
+
+?>

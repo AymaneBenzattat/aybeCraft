@@ -1,0 +1,30 @@
+<?php
+
+function create($name){
+    global $console;
+    $name=trim($name);
+    if(!file_exists("./Models/".$name.".php")){
+        $content="<?php\n\nnamespace Models;\n\nuse Utilities\BasedObject;\nuse Utilities\SoftDelete;\n\nclass ".$name." extends BasedObject\n{\n\n\t//Model public properties here\n\n\t//Model public methods here\n\n}\n\n?>";
+        $file = fopen("./Models/".$name.".php", "w");
+        fwrite($file, $content);
+        fclose($file);
+        $console->print("Model ");
+        $console->print("'".$name."'","white","blue");
+        $console->printLine(" created successfully!");
+    }else{
+        $console->printLine("Model '".$name."' already exists, please delete it first.","white","red");
+    }
+}
+
+if (isset($arguments[0])) {
+    $name=$arguments[0];
+    create($name);
+}else{
+    $console->print("Enter model name: ");
+    $name=$console->read();
+    $console->foreground("default");
+    $console->background("default");
+    create($name);
+}
+
+?>

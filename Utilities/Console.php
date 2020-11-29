@@ -50,6 +50,8 @@ class Console{
 
     public function print($string,$foreground="default",$background="default"){
         echo $this->get($string,$foreground,$background);
+        echo $this->foreground("default");
+        echo $this->background("default");
     }
 
     public function printLine($string,$foreground="default",$background="default"){
@@ -63,6 +65,15 @@ class Console{
 
     public function foreground($color="default"){
         return "\e[".$this->fg_colors[$color]."m";
+    }
+
+    public function read(){
+        return fgets(STDIN);
+    }
+
+    public function readLine(){
+        echo "\n";
+        return $this->read();
     }
 
 }

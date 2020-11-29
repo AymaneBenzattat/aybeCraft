@@ -57,9 +57,9 @@ class Route
     {
         $method="Controllers\\".$method;
         $methodParts=explode("::",$method);
-        $ReflectionMethod =  new \ReflectionMethod($methodParts[0], $methodParts[1]);
+        $reflectionMethod =  new \ReflectionMethod($methodParts[0], $methodParts[1]);
 
-        $params = $ReflectionMethod->getParameters();
+        $params = $reflectionMethod->getParameters();
 
         $paramNames = array_map(function( $item ){
             return $item->getName();
@@ -77,12 +77,16 @@ class Route
             $values=[];
         }
 
-        $result = forward_static_call_array($method,$values);
+        $reflection  = new \ReflectionClass($methodParts[0]);
+        $object = $reflection->newInstance();
+        call_user_func_array(array($object,$methodParts[1]), $values);
     }
 
     public static function resolve($request){
         $request=rtrim($request,"/");
         $request=ltrim($request,"/");
+        $current_url = explode('?', $request);
+        $request=$current_url[0];
         $routes=self::$routes;
         $server=self::server();
         $args=[];

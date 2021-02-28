@@ -15,7 +15,7 @@ for ($i=8080; $i < 65535; $i++) {
         $console->printLine($console->foreground("white").$console->background("blue")."Craft development server");
         $console->printLine($console->foreground("white").$console->background("green")."Listening to 127.0.0.1 on port ".$i);
         echo $console->background().$console->foreground();
-        shell_exec("open http://127.0.0.1:".$i);
+        // $console->printLine(__DIR__);
         $output = shell_exec("php -S 127.0.0.1:".$i);
     }
 }

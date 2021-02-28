@@ -5,7 +5,7 @@ namespace Utilities;
 class View
 {
 
-    public static function display($file,$variables=null){
+    public static function compile($file,$variables=null){
         // $dirs = array_filter(glob('./Views/*'), 'is_dir');
         // $count = count($dirs);
         $view = file_get_contents("./Views/".$file);
@@ -37,13 +37,13 @@ class View
             $view=str_replace($matches[$i][0],$section,$view);
         }
         
-        $re = '/@url\("[a-zA-Z@$#! 0-9?=\.\/_-]+"\)/m';
+        $re = '/@url\([a-zA-Z@$#! 0-9?=\.\/_-]+\)/m';
         preg_match_all($re, $view, $matches, PREG_SET_ORDER, 0);
         // print_r($matches);
         for($i=0;$i<count($matches);$i++){
             //$matches[$i][0]
-            $layout=str_replace("@url(\"","",$matches[$i][0]);
-            $layout=str_replace("\")","",$layout);
+            $layout=str_replace("@url(","",$matches[$i][0]);
+            $layout=str_replace(")","",$layout);
             $layout=rtrim($layout,"/");
             $layout=ltrim($layout,"/");
             $section = rtrim(NEWAPPURL,"/")."/".ltrim($layout);
@@ -114,25 +114,31 @@ class View
             // print_r($matches);
             $view=str_replace($matches[$i][0],$section,$view);
         }
+
+        $re = '/@v\([><a-zA-Z@$#! 0-9?=\.\/_-]+\)/m';
+        preg_match_all($re, $view, $matches, PREG_SET_ORDER, 0);
+        // print_r($matches);
+        for($i=0;$i<count($matches);$i++){
+            //$matches[$i][0]
+            $layout=str_replace("@v(","<?= ",$matches[$i][0]);
+            $layout=str_replace(")"," ?>",$layout);
+            // $layout=rtrim($layout,"/");
+            // $layout=ltrim($layout,"/");
+            $section=$layout;
+            // //print_r($matches);
+            $view=str_replace($matches[$i][0],$section,$view);
+        }
        
             
     
         $view="?>".$view;
+        // if(!is_null($variables)){extract($variables);}
+        return $view;
+    }
+
+    public static function display($file,$variables=null){
         if(!is_null($variables)){extract($variables);}
-        eval($view);
-        // echo $view;
-    }
-
-    public static function setMessage($key,$value){
-        $_SESSION["message_".$key]=$value;
-    }
-
-    public static function getMessage($key){
-        if (isset($_SESSION["message_".$key])) {
-            return $_SESSION["message_".$key];
-        }else {
-            return null;
-        }
+        eval(self::compile($file));
     }
 
 }

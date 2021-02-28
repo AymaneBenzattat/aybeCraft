@@ -1,0 +1,107 @@
+@media (prefers-color-scheme: light) {
+    :root{
+        --background:white;
+        --blurred:rgba(255, 255, 255, 0.8);
+        --foreground:black;
+        --shadow: 0px 0px 8pt 0px rgba(0,0,0,0.13);
+    }
+}
+@media (prefers-color-scheme: dark) {
+    :root{
+        --background:black;
+        --blurred:rgba(0, 0, 0, 0.6);
+        --foreground:white;
+        --shadow: 0px 0px 8pt 0px rgba(255,255,255,0.43);
+    }
+}
+body{
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--background);
+    color: var(--foreground);
+}
+a{
+    color: var(--foreground);
+}
+nav{
+    background-color: var(--background);
+}
+nav > ul > li > a{
+    color: var(--foreground) !important;
+}
+.box-shadow{
+    -webkit-box-shadow: var(--shadow);
+    -moz-box-shadow: var(--shadow);
+    box-shadow: var(--shadow);
+}
+.text-shadow{
+    text-shadow: 0px 0px 24px rgba(0, 0, 0, 0.21);
+}
+.shadowed {
+    filter: drop-shadow(0px 0px 24pt rgba(0,0,0,0.13));
+    -webkit-filter: drop-shadow(0px 0px 24pt rgba(0,0,0,0.13));
+}
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+.text-left {
+    text-align: left;
+}
+.float-right{
+    float: right;
+}
+.full-width{
+    width: 100%;
+}
+.full-height{
+    height: 100vh;
+}
+.text-blue{
+    color: blue;
+}
+.text-logo{
+    color: #3388ff;
+}
+.text-red{
+    color: red;
+}
+.center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+fieldset{
+    padding: 50pt !important;
+    border-radius: 12pt;
+    background-color: var(--blurred);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(15px);
+}
+button{
+    border-radius: 4pt !important;
+    -webkit-transition-duration: 0.3s;
+ 	transition-duration: 0.3s;
+}
+button:hover{
+    filter: drop-shadow(0px 0px 4pt rgba(0,0,0,0.3));
+    -webkit-filter: drop-shadow(0px 0px 4pt rgba(0,0,0,0.3));
+}
+.pure-menu-disabled, .pure-menu-heading, .pure-menu-link{
+    padding: .9em 2em;
+}
+.message{
+    color: red;
+}
+#load{
+    width:100%;
+    height:100%;
+    position:fixed;
+    z-index:9999;
+    background:url("https://www.creditmutuel.fr/cmne/fr/banques/webservices/nswr/images/loading.gif") no-repeat center center rgba(0,0,0,0.25)
+}

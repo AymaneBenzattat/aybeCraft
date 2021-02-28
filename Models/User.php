@@ -11,26 +11,16 @@ use Utilities\SoftDelete;
 class User extends BasedObject
 {
     use SoftDelete;
-
     public $id;
     /**
      * @salted
      * @hidden
-     * @column password
      */
-    public $passsword;
-    /**
-     * @var email
-     */
-    /**
-     * @column email
-     */
-    public $username;
-    public $photo="default.jpg";
+    public $password;
+    public $email;
+    public $photo;
+    public $remember_token;
     public $name="Utilisateur";
-    public $used_storage=0;
-    public $total_storage=0;
-    public $user_type="user";
 }
 
 

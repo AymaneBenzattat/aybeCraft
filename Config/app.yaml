@@ -1,0 +1,13 @@
+APPNAME: "Craft"
+APPURL: "localhost:8888/Craft-final/"
+APPKEY: "dGhpc2lzYWR1bW15YXBwa2V5aXRpc2VuY29kZWR1c2luZ2Jhc2U2NHBsZWFzZWNvbnNpZGVydXNpbmd5b3Vyb3du"
+DEBUG: true
+HTTPS: false
+LANG: "english"
+
+DBHOST: "127.0.0.1"
+DBNAME: "craft"
+DBUSER: "user"
+DBPASS: 
+DBPORT: 8889
+SETUP: true

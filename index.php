@@ -1,6 +1,15 @@
 <?php
 
-require_once("./Config/app.php");
+require_once(__DIR__."/Utilities/Core/bootstrap.php");
+
+use Utilities\Database;
+use Utilities\Route;
+
+session_start();
+
+if (!isset($_SESSION["csrf-token"])) {
+    $_SESSION["csrf-token"]=bin2hex(openssl_random_pseudo_bytes(32));
+}
 
 if(DEBUG){
     ini_set('display_errors', 1);
@@ -11,18 +20,8 @@ if(DEBUG){
     ini_set('display_startup_errors', 0);
 }
 
-spl_autoload_register(function ($class_name) {
-    $class_name=str_replace('\\', '/', $class_name);
-    $class_name=$class_name.".php";
-    if(file_exists($class_name)){
-        require_once($class_name);
-    }else{
-        echo $class_name." not found";
-    }
-});
 
-use Utilities\Database;
-use Utilities\Route;
+
 
 include("./Config/routes.php");
 
@@ -33,6 +32,7 @@ if(SETUP){
     Database::setDatabase(DBNAME);
     Database::setPort(DBPORT);
 }
+
 $oldurl=$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
 $url="/";
 $result=explode(APPURL,$oldurl);

@@ -65,11 +65,11 @@ class Storage{
 
     // }
 
-    public static function download($file){
+    public static function download($file,$mime= "application/octet-stream"){
         $file=realpath(dirname(__FILE__))."/../Storage/".$file;
         if (file_exists($file)) {
             header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
+            header('Content-Type: '.$mime);
             header('Content-Disposition: attachment; filename="'.basename($file).'"');
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
@@ -78,6 +78,15 @@ class Storage{
             readfile($file);
             exit;
         }
+    }
+
+    public static function media($file, $mime = "image/png"){
+        $file = realpath(dirname(__FILE__)) . "/../Storage/" . $file;
+        $fp = fopen($file, 'rb');
+        header("Content-Type: image/png");
+        header("Content-Length: " . filesize($file));
+        fpassthru($fp);
+        exit;
     }
 
     public static function encrypt($filename){

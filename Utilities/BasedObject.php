@@ -11,10 +11,10 @@ abstract class BasedObject
     *@var int
     */
     public $id;
-    private $db_table;
-    private $db_fields;
-    private $id_column="id";
-    private static $classname=__CLASS__;
+    protected $db_table;
+    protected $db_fields;
+    protected $id_column="id";
+    protected static $classname=__CLASS__;
 
     public function getId_column(){
         return $this->id_column;
@@ -99,7 +99,7 @@ abstract class BasedObject
 
     public final function columnExists($column){
         $result=Database::selectOne("SHOW COLUMNS FROM `".$this->db_table."` LIKE '".$column."';");
-        if(count($result)>0){
+        if(isset($result["Field"])){
             return true;
         }else{
             return false;

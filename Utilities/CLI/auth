@@ -1,0 +1,107 @@
+<?php
+
+
+
+
+use Utilities\Config;
+use Utilities\Database;
+
+function createTables(){
+    
+    Database::setServer(DBHOST);
+    Database::setUsername(DBUSER);
+    Database::setPassword(DBPASS);
+    Database::setDatabase(DBNAME);
+    Database::setPort(DBPORT);
+
+    $user_table=Config::get("auth","user_table");
+    $role_table=Config::get("auth","role_table");
+    $permission_table=Config::get("auth","permission_table");
+    $role_column=Config::get("auth","role_column");
+    $permission_column=Config::get("auth","permission_column");
+
+    $sql1="CREATE TABLE `".$user_table."` (
+            `id` INT NOT NULL AUTO_INCREMENT,
+            `email` varchar(255) NOT NULL UNIQUE,
+            `password` varchar(255) NOT NULL,
+            `name` varchar(255) DEFAULT 'John Doe',
+            `photo` varchar(1024) DEFAULT 'default.jpg',
+            `created_at` TIMESTAMP NULL DEFAULT NULL,
+            `updated_at` TIMESTAMP NULL DEFAULT NULL,
+            PRIMARY KEY (`id`)
+        );";
+
+    $sql2="CREATE TABLE `".$role_table."` (
+            `id` INT NOT NULL AUTO_INCREMENT,
+            `".$role_column."` varchar(255),
+            PRIMARY KEY (`id`)
+        );";
+
+    $sql3="CREATE TABLE `".$permission_table."` (
+            `id` INT NOT NULL AUTO_INCREMENT,
+            `".$permission_column."` varchar(255),
+            PRIMARY KEY (`id`)
+        );";
+
+    $sql4="CREATE TABLE `user_role` (
+            `id_user` INT NOT NULL,
+            `id_role` INT NOT NULL,
+            PRIMARY KEY (`id_user`,`id_role`)
+        );";
+
+    $sql5="CREATE TABLE `role_permission` (
+            `id_role` INT NOT NULL,
+            `id_permission` INT NOT NULL,
+            PRIMARY KEY (`id_role`,`id_permission`)
+        );";
+
+    $sql6="ALTER TABLE `user_role` ADD CONSTRAINT `user_role_fk0` FOREIGN KEY (`id_user`) REFERENCES `".$user_table."`(`id`);";
+
+    $sql7="ALTER TABLE `user_role` ADD CONSTRAINT `user_role_fk1` FOREIGN KEY (`id_role`) REFERENCES `".$role_table."`(`id`);";
+
+    $sql8="ALTER TABLE `role_permission` ADD CONSTRAINT `role_permission_fk0` FOREIGN KEY (`id_role`) REFERENCES `".$role_table."`(`id`);";
+
+    $sql9="ALTER TABLE `role_permission` ADD CONSTRAINT `role_permission_fk1` FOREIGN KEY (`id_permission`) REFERENCES `".$permission_table."`(`id`);";
+
+    Database::update($sql1);
+    Database::update($sql2);
+    Database::update($sql3);
+    Database::update($sql4);
+    Database::update($sql5);
+    Database::update($sql6);
+    Database::update($sql7);
+    Database::update($sql8);
+    Database::update($sql9);
+}
+
+function createControllers(){
+    copy(__DIR__ . "/../Storage/Auth/AuthController.php", __DIR__ . "/../../Controllers/AuthController.php");
+    if (!file_exists(__DIR__ . "/../../Controllers/API")) {
+        mkdir(__DIR__ . "/../../Controllers/API/", 0777, true);
+    }
+    copy(__DIR__ . "/../Storage/Auth/API/AuthController.php", __DIR__ . "/../../Controllers/API/AuthController.php");
+}
+
+function createUI(){
+
+}
+
+    $console->print("Do you want to create database tables? (yes/no): ");
+    $choice=$console->read();
+    if (strcmp(trim($choice),"yes")==0) {
+        createTables();
+    }
+
+    $console->print("Do you want to create authentication controllers? (yes/no): ");
+    $choice=$console->read();
+    if (strcmp(trim($choice),"yes")==0) {
+        createControllers();
+    }
+
+    $console->print("Do you want to create authentication UI? (yes/no): ");
+    $choice=$console->read();
+    if (strcmp(trim($choice),"yes")==0) {
+        createUI();
+    }
+
+?>

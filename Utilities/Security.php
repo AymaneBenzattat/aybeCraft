@@ -13,6 +13,14 @@ class Security{
         return password_verify($password,$hash);
     }
 
+    public static function csrf($token){
+        if(hash_equals($_SESSION['csrf-token'], $token)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public static function encrypt($string){
         $iv=openssl_random_pseudo_bytes(16);
         $result=openssl_encrypt($string,"aes-256-ctr",self::$secret,0,$iv);

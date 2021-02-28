@@ -7,7 +7,7 @@ class Database
     private static $server = "localhost";
     private static $username = "root";
     private static $password = "";
-    private static $database = "abcraft";
+    private static $database = "craft";
     private static $port = 3306;
 
     public static function connect(){
